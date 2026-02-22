@@ -1,0 +1,87 @@
+.paginationWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ded9d5;
+  transition: all 0.2s;
+  border-radius: 6px;
+  border: none;
+  padding: 9px 12px;
+  width: fit-content;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1c1c1c;
+  cursor: pointer;
+}
+
+.navButton:hover {
+  background-color: #d3cbc2;
+}
+
+.navButtonDisabled {
+  composes: navButton;
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
+.pagesContainer {
+  display: flex;
+  gap: 6px;
+  margin: 0 12px;
+  flex: 1;
+}
+
+.pageLink {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  transition: all 0.2s;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1c1c1c;
+  text-decoration: none;
+}
+
+.pageLink:hover {
+  background-color: #d3cbc2;
+}
+
+.pageLinkActive {
+  composes: pageLink;
+  background-color: #1c1c1c;
+  color: #ffffff;
+}
+
+.pageLinkActive:hover {
+  background-color: #1c1c1c;
+}
+
+.ellipsis {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.arrowIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.arrowIconRight {
+  composes: arrowIcon;
+  transform: rotate(180deg);
+}
