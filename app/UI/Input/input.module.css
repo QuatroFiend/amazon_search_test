@@ -1,15 +1,15 @@
 .input {
-  padding: 10px 12px;
-  height: 100%;
-  display: flex;
-  flex: 1;
-  border: none;
-  box-shadow: var(--box-shadow);
-  border-radius: 0; 
+    padding: 10px 12px;
+    height: 100%;
+    border: none;
+    box-shadow: var(--box-shadow);
+    border-radius: 0;
+    box-sizing: border-box;
+    font-size: 15px;
 }
 
 .input:focus {
-  outline: none;
-  border-color: var(--primary-color); 
-  box-shadow: 0 0 0 2px var(--primary-color-light); 
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--box-shadow);
 }

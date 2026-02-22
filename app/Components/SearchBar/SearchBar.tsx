@@ -8,7 +8,7 @@ const SearchBar = () => {
       <IconButton
         iconHeight={24}
         iconWidth={24}
-        iconName="ArrowDown"
+        iconName="Menu"
         textContent="All"
         className={styles.allButton}
       />

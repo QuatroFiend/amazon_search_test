@@ -1,0 +1,40 @@
+.header {
+  display: flex;
+  align-items: stretch;
+  padding: 0 1rem;
+  gap: 12px;
+  height: 60px;
+  width: 100%;
+  background-color: #131921;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.searchArea {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  padding: 8px 0;
+  position: relative;
+  z-index: 101;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #ffffff;
+  white-space: nowrap;
+}
