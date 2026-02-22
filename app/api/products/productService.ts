@@ -1,5 +1,5 @@
 import { supabase } from "../supabase/supabase";
-import { PaginationParams } from "../types/Pagination";
+import { PaginationParams } from "../types/pagination";
 
 export const getProducts = async (
   pagination: PaginationParams,

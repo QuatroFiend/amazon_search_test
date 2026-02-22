@@ -4,7 +4,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Icon from "../Icon/Icon";
 import styles from "./pagination.module.css";
-import { generatePageRange } from "@/app/utils/generatePageRange";
+import useGeneratePageRange from "@/app/Hooks/useGeneratePageRange";
+
 
 export interface IPagination {
   page: number;
@@ -21,7 +22,7 @@ interface Props {
 const Pagination = ({ pagination, paginationPage }: Props) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const pageRange = generatePageRange(pagination.pageCount, paginationPage);
+  const pageRange = useGeneratePageRange(pagination.pageCount, paginationPage);
 
   const buildHref = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
