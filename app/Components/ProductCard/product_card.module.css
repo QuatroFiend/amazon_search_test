@@ -1,0 +1,35 @@
+.cardWrapper {
+  flex-direction: column;
+  width: 260px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+  cursor: pointer;
+  background-color: #ffffff;
+}
+
+.cardWrapper:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cardContent {
+  display: flex;
+  padding: 14px;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.imageWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #f7f7f7;
+  height: 260px;
+}
+
+.imageWrapper img {
+  object-fit: contain;
+  max-height: 100%;
+}
