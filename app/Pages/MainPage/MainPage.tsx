@@ -1,19 +1,20 @@
-import {
-  IBrand,
-  ICategory,
-  IProduct,
-  IProductCategory,
-} from "@/app/api/products/productTypes";
 import ProductCardsContainer from "@/app/Components/ProductCard/ProductCardsContainer";
 import Typography from "@/app/UI/Typography/Typography";
 import styles from "./main_page.module.css";
-import Pagination from "@/app/UI/Pagination/Pagination";
+import Pagination, { IPagination } from "@/app/UI/Pagination/Pagination";
+import { IProduct } from "@/app/api/products/IProductTypes";
+import { IBrand } from "@/app/api/brands/IBrandTypes";
+import {
+  ICategory,
+  IProductCategory,
+} from "@/app/api/categories/ICategoriesTypes";
 
 interface MainPageProps {
   products: IProduct[] | null;
   brands: IBrand[] | null;
   categories: ICategory[] | null;
   productCategories: IProductCategory[] | null;
+  pagination: IPagination;
 }
 
 const MainPage = ({
@@ -21,6 +22,7 @@ const MainPage = ({
   brands,
   categories,
   productCategories,
+  pagination,
 }: MainPageProps) => {
   return (
     <div className={"page-container"}>
@@ -29,8 +31,8 @@ const MainPage = ({
         <ProductCardsContainer products={products} brands={brands} />
       </div>
       <Pagination
-        pagination={{ page: 1, pageCount: 10, pageSize: 10, total: 100 }}
-        paginationPage={1}
+        pagination={pagination}
+        paginationPage={pagination.page}
       />
     </div>
   );

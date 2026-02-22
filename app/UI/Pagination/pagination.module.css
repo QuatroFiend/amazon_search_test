@@ -1,6 +1,8 @@
 .paginationWrapper {
+  margin: 14 0 14 0;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .navButton {
@@ -17,10 +19,12 @@
   font-weight: 500;
   color: #1c1c1c;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .navButton:hover {
   background-color: #d3cbc2;
+  transform: scale(1.02);
 }
 
 .navButtonDisabled {
@@ -34,7 +38,6 @@
   display: flex;
   gap: 6px;
   margin: 0 12px;
-  flex: 1;
 }
 
 .pageLink {
