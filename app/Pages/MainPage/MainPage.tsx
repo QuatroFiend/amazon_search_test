@@ -8,6 +8,8 @@ import {
   ICategory,
   IProductCategory,
 } from "@/app/api/categories/ICategoriesTypes";
+import SearchBar from "@/app/Components/SearchBar/SearchBar";
+import Header from "@/app/UI/Header/Header";
 
 interface MainPageProps {
   products: IProduct[] | null;
@@ -26,14 +28,10 @@ const MainPage = ({
 }: MainPageProps) => {
   return (
     <div className={"page-container"}>
-      <Typography content={"MainPage"} variant={"title"} />
       <div className={styles.productCardsContainer}>
         <ProductCardsContainer products={products} brands={brands} />
       </div>
-      <Pagination
-        pagination={pagination}
-        paginationPage={pagination.page}
-      />
+      <Pagination pagination={pagination} paginationPage={pagination.page} />
     </div>
   );
 };

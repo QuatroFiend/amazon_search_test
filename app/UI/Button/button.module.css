@@ -1,5 +1,5 @@
 .btn {
-  background: linear-gradient(102deg, #f9d81f 0%, #d9a300 100%);
+  background: var(--primary-gradient);
   color: white;
   padding: 12px 32px;
   border: none;
@@ -8,14 +8,14 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(0, 8, 44, 0.128);
+  box-shadow: var(--box-shadow);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .btn:hover {
   transform: scale(1.02);
-  box-shadow: 0 2px 10px rgba(0, 8, 44, 0.4);
+  box-shadow: var(--box-shadow-hover);
 }
 
 .btn:active {

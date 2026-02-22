@@ -20,8 +20,8 @@ const ProductCard = ({
         <Image src={productImage} alt="ProductCard" width={200} height={200} />
       </div>
       <div className={styles.cardContent}>
-        <Typography content={productName} variant={"cardTitle"} />
-        <Typography content={brand} variant={"info"} />
+        <Typography variant={"cardTitle"}>{productName}</Typography>
+        <Typography variant={"info"}>{brand}</Typography>
         <Button buttonName={"Add to cart"} />
       </div>
     </div>
