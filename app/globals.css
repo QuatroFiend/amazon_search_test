@@ -1,3 +1,9 @@
+:root {
+  --primary-gradient: linear-gradient(102deg, #f9d81f 0%, #d9a300 100%);
+  --box-shadow: 0 2px 10px rgba(0, 8, 44, 0.128);
+  --box-shadow-hover: 0 2px 10px rgba(0, 8, 44, 0.4);
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;

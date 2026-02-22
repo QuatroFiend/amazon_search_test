@@ -1,0 +1,15 @@
+.input {
+  padding: 10px 12px;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  border: none;
+  box-shadow: var(--box-shadow);
+  border-radius: 0; 
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary-color); 
+  box-shadow: 0 0 0 2px var(--primary-color-light); 
+}

@@ -1,0 +1,37 @@
+.searchBarWrapper {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+.searchInput {
+  flex-grow: 1;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.allButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px 0 0 6px;
+  box-shadow: none;
+  background: #e3e3e3;
+  padding: 10px 12px;
+}
+
+.searchButton {
+  cursor: pointer;
+  border: none;
+  border-radius: 0 6px 6px 0;
+  box-shadow: none;
+  background: var(--primary-gradient);
+  padding: 10px 12px;
+}
