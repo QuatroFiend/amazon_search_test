@@ -20,7 +20,11 @@ export const FilterAccordion = ({
     <div className={styles.accordionWrapper}>
       <button onClick={onToggle}>
         <Typography variant="cardTitle">{title}</Typography>
-        {isOpen ? <Icon name="ArrowUp" /> : <Icon name="ArrowDown" />}
+        <div
+          className={isOpen ? styles.accordionArrow : styles.accordionIconUp}
+        >
+          <Icon name="ArrowUp" height={16} width={16} />
+        </div>
       </button>
       <div
         className={[

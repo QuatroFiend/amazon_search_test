@@ -3,7 +3,6 @@
   padding: 8px 0;
 }
 
-/* Button (Accordion Header) */
 .accordionWrapper button {
   width: 100%;
   display: flex;
@@ -15,27 +14,32 @@
   padding: 8px 0;
 }
 
-/* Optional hover effect */
 .accordionWrapper button:hover {
   opacity: 0.8;
 }
 
-/* Children Container */
 .accordionChildren {
   overflow: hidden;
   transition: all 0.3s ease;
 }
 
-/* Open state */
 .accordionChildrenUntoggled {
-  max-height: 500px; /* large enough to fit content */
+  max-height: 500px;
   opacity: 1;
   margin-top: 8px;
 }
 
-/* Closed state */
 .accordionChildrenToggled {
   max-height: 0;
   opacity: 0;
   margin-top: 0;
+}
+
+.accordionArrow {
+  transition: all 0.3s ease;
+}
+
+.accordionIconUp {
+  transition: all 0.3s ease;
+  transform: rotate(180deg);
 }

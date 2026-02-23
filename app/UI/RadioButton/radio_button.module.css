@@ -1,0 +1,52 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: #f4f2f0;
+  border-radius: 6px;
+  overflow: auto;
+  max-height: 265px;
+}
+
+.optionLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;          
+  cursor: pointer;
+  padding: 11px 12px;
+  user-select: none;
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radioCircle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid #a9a9a9;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, border-width 0.2s;
+}
+
+.radioCircleSelected {
+  border: 3px solid #050049;
+}
+
+.labelText {
+  font-size: 14px;
+  line-height: 21.7px;
+  font-weight: 400;
+  color: #a9a9a9;
+  transition: color 0.2s;
+}
+
+.labelTextSelected {
+  color: #000000 !important;
+}

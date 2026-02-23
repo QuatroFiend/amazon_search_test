@@ -7,7 +7,6 @@
   max-height: 260px;
 }
 
-/* Label */
 .label {
   display: flex;
   align-items: center;
@@ -16,12 +15,10 @@
   padding: 11px 12px;
 }
 
-/* Hidden native checkbox */
 .hiddenInput {
   display: none;
 }
 
-/* Custom checkbox */
 .checkbox {
   width: 14px;
   height: 14px;
@@ -35,11 +32,10 @@
 }
 
 .checkboxActive {
-  background-color: #c09368;
-  border-color: #c09368;
+  background-color: #050049;
+  border-color: #18016b;
 }
 
-/* Text */
 .text {
   font-size: 14px;
   line-height: 21.7px;

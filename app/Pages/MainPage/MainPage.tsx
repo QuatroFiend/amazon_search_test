@@ -30,12 +30,11 @@ const MainPage = ({
   return (
     <div className={"page-container"}>
       <div className={styles.productCardsContainer}>
-        <FilterBar 
-        categories={categories}
-        brands={brands}
-        productCategories={productCategories}
+        <FilterBar
+          categories={categories}
+          brands={brands}
+          productCategories={productCategories}
         />
-
         <ProductCardsContainer products={products} brands={brands} />
       </div>
       <Pagination pagination={pagination} paginationPage={pagination.page} />
