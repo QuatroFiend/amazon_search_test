@@ -1,0 +1,53 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: #f4f2f0;
+  border-radius: 6px;
+  overflow-y: auto;
+  max-height: 260px;
+}
+
+/* Label */
+.label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 11px 12px;
+}
+
+/* Hidden native checkbox */
+.hiddenInput {
+  display: none;
+}
+
+/* Custom checkbox */
+.checkbox {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid #a9a9a9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.checkboxActive {
+  background-color: #c09368;
+  border-color: #c09368;
+}
+
+/* Text */
+.text {
+  font-size: 14px;
+  line-height: 21.7px;
+  font-weight: 400;
+  color: #a9a9a9;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.textActive {
+  color: #000000;
+}

@@ -1,0 +1,41 @@
+.accordionWrapper {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 8px 0;
+}
+
+/* Button (Accordion Header) */
+.accordionWrapper button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+/* Optional hover effect */
+.accordionWrapper button:hover {
+  opacity: 0.8;
+}
+
+/* Children Container */
+.accordionChildren {
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Open state */
+.accordionChildrenUntoggled {
+  max-height: 500px; /* large enough to fit content */
+  opacity: 1;
+  margin-top: 8px;
+}
+
+/* Closed state */
+.accordionChildrenToggled {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+}
