@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent } from "react";
+import { FormEvent, MouseEvent } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import IconButton from "@/app/UI/IconButton/IconButton";
 import Input from "@/app/UI/Input/Input";
@@ -12,12 +12,9 @@ const SearchBar = () => {
   const router = useRouter();
   const currentQuery = searchParams.get("q") || "";
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const pushWithQuery = (queryValue: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    const formData = new FormData(event.currentTarget);
-    const normalizedQuery = String(formData.get("q") || "").trim();
+    const normalizedQuery = queryValue.trim();
 
     if (normalizedQuery) {
       params.set("q", normalizedQuery);
@@ -32,15 +29,33 @@ const SearchBar = () => {
     router.push(nextUrl, { scroll: false });
   };
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const nextValue = String(formData.get("q") || "");
+    pushWithQuery(nextValue);
+  };
+
+  const handleClear = (event: MouseEvent<HTMLButtonElement>) => {
+    const input = event.currentTarget.form?.elements.namedItem("q");
+    if (input instanceof HTMLInputElement) {
+      input.value = "";
+      input.focus();
+    }
+
+    pushWithQuery("");
+  };
+
   return (
     <form className={styles.searchBarWrapper} onSubmit={handleSubmit}>
       <IconButton
         iconHeight={24}
         iconWidth={24}
-        iconName="Menu"
-        textContent="All"
+        iconName="Clear"
+        textContent="Clear"
         className={styles.allButton}
         type="button"
+        onClick={handleClear}
       />
       <Input
         type="text"
