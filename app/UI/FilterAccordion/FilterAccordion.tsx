@@ -19,7 +19,7 @@ export const FilterAccordion = ({
   return (
     <div className={styles.accordionWrapper}>
       <button onClick={onToggle}>
-        <Typography variant="cardTitle">{title}</Typography>
+        <Typography variant="title">{title}</Typography>
         <div
           className={isOpen ? styles.accordionArrow : styles.accordionIconUp}
         >

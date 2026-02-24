@@ -3,12 +3,11 @@ import { FilterAccordion } from "@/app/UI/FilterAccordion/FilterAccordion";
 import styles from "./filter_bar.module.css";
 import CheckboxFilter from "@/app/UI/CheckBox/CheckBox";
 import { IBrand } from "@/app/api/brands/IBrandTypes";
-import {
-  ICategory,
-  IProductCategory,
-} from "@/app/api/categories/ICategoriesTypes";
+import { ICategory } from "@/app/api/categories/ICategoriesTypes";
 import { useState } from "react";
 import RadioButtonFilter from "@/app/UI/RadioButton/RadioButton";
+import { useFilters } from "@/app/Hooks/useFilters";
+import { Button } from "@/app/UI/Button/Button";
 
 type FilterConfig<Entity> = {
   title: string;
@@ -21,14 +20,10 @@ type FilterConfig<Entity> = {
 interface FilterBarProps {
   brands: IBrand[] | null;
   categories: ICategory[] | null;
-  productCategories: IProductCategory[] | null;
 }
-export const FilterBar = ({
-  brands,
-  categories,
-  productCategories,
-}: FilterBarProps) => {
+export const FilterBar = ({ brands, categories }: FilterBarProps) => {
   const [openSections, setOpenSections] = useState<Set<string>>(new Set());
+  const { filters: urlFilters, updateFilters, clearFilters } = useFilters();
 
   const toggleSection = (title: string) => {
     setOpenSections((prev) => {
@@ -54,6 +49,11 @@ export const FilterBar = ({
     },
   ];
 
+  const hasActiveFilters =
+    urlFilters.brands.length > 0 ||
+    urlFilters.categories.length > 0 ||
+    urlFilters.sortBy !== "newest";
+
   return (
     <div className={styles.filterBarWrapper}>
       {filters.map((filter) => {
@@ -68,6 +68,8 @@ export const FilterBar = ({
         });
 
         const isOpen = openSections.has(filter.title);
+        const filterKey = filter.title.toLowerCase() as "brands" | "categories";
+        const initialValues = urlFilters[filterKey] || [];
 
         return (
           <FilterAccordion
@@ -78,24 +80,37 @@ export const FilterBar = ({
           >
             <CheckboxFilter
               name={filter.title.toLowerCase().replace(/\s+/g, "-")}
-              onChange={() => {}}
-              initialOption={[]}
+              onChange={(name, values) => {
+                updateFilters(filterKey, values as string[]);
+              }}
+              initialOption={initialValues}
               options={options}
             />
           </FilterAccordion>
         );
       })}
       <RadioButtonFilter
-        initialOption={"7"}
-        name="Published Period"
-        onChange={() => {}}
+        initialOption={urlFilters.sortBy}
+        name="Sort by"
+        onChange={(name, value) => {
+          updateFilters("sortBy", value as string);
+        }}
         options={[
-          { label: "New (up to 7 days)", value: "7" },
-          { label: "Up to 14 days", value: "14" },
-          { label: "Up to 30 days", value: "30" },
-          { label: "Up to 90 days", value: "90" },
+          { label: "Newest first", value: "newest" },
+          { label: "Oldest first", value: "oldest" },
+          { label: "Name (A-Z)", value: "name-asc" },
+          { label: "Name (Z-A)", value: "name-desc" },
+          { label: "Popular brands", value: "popular" },
         ]}
       />
+      <div className={styles.clearAllFilters}>
+        <Button
+          buttonName="Clear all filters"
+          disabled={!hasActiveFilters}
+          type="submit"
+          onClick={clearFilters}
+        />
+      </div>
     </div>
   );
 };

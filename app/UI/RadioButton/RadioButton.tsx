@@ -39,7 +39,15 @@ export default function RadioButtonFilter({
               name={name}
               value={option.value}
               checked={isSelected}
+              onClick={(event) => {
+                if (isSelected) {
+                  event.preventDefault();
+                  setSelectedOption("");
+                  onChange(name, "");
+                }
+              }}
               onChange={() => {
+                if (isSelected) return;
                 setSelectedOption(option.value);
                 onChange(name, option.value);
               }}

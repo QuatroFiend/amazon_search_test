@@ -13,6 +13,21 @@
   letter-spacing: 0.5px;
 }
 
+.btnDisabled{
+  background: #a9a9a9;
+  color: white;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--box-shadow);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .btn:hover {
   transform: scale(1.02);
   box-shadow: var(--box-shadow-hover);

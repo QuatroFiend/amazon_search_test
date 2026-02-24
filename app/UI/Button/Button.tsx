@@ -18,7 +18,7 @@ export const Button = ({
       <button
         onClick={onClick}
         type={type}
-        className={btn.btn}
+        className={!disabled ? btn.btn : btn.btnDisabled}
         disabled={disabled}
       >
         {buttonName}

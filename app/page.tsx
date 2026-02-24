@@ -5,22 +5,71 @@ import {
   getProductCategories,
 } from "./api/categories/categoriesService";
 import { getBrands } from "./api/brands/brandsService";
+import { ProductFilters, SortOption } from "./api/products/types";
+import { redirect } from "next/navigation";
 
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    brands?: string;
+    categories?: string;
+    period?: string;
+    sortBy?: string;
+  }>;
 }) {
   const params = await searchParams;
-  const page = Number(params.page) || 1;
+  const parsedPage = Number(params.page);
+  const page =
+    Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
 
-  const [productData, categories, productCategories, brands] =
-    await Promise.all([
-      getProducts({ page, pageSize: 12 }),
-      getCategories(),
-      getProductCategories(),
-      getBrands(),
-    ]);
+  const [brands, categories, productCategories] = await Promise.all([
+    getBrands(),
+    getCategories(),
+    getProductCategories(),
+  ]);
+
+  const brandParams = params.brands?.toString().split(",") || [];
+  const categoriesParams = params.categories?.toString().split(",") || [];
+  const period = params.period || "7";
+  const sortBy = (params.sortBy as SortOption) || "newest";
+
+  const brandIds = brandParams
+    .map(
+      (name) =>
+        brands?.find((b) => b.name.toLowerCase() === name.toLowerCase())?.id,
+    )
+    .filter((id): id is number => id !== undefined);
+
+  const categoryIds = categoriesParams
+    .map(
+      (name) =>
+        categories?.find((c) => c.name.toLowerCase() === name.toLowerCase())
+          ?.id,
+    )
+    .filter((id): id is number => id !== undefined);
+
+  const filters: ProductFilters = {
+    brandIds: brandIds.length > 0 ? brandIds : undefined,
+    categoryIds: categoryIds.length > 0 ? categoryIds : undefined,
+    sortBy,
+  };
+
+  const productData = await getProducts({ page, pageSize: 12 }, filters);
+
+  if (productData.page !== page) {
+    const nextParams = new URLSearchParams();
+
+    if (params.brands) nextParams.set("brands", params.brands);
+    if (params.categories) nextParams.set("categories", params.categories);
+    if (params.period) nextParams.set("period", params.period);
+    if (params.sortBy) nextParams.set("sortBy", params.sortBy);
+    if (productData.page > 1) nextParams.set("page", String(productData.page));
+
+    const query = nextParams.toString();
+    redirect(query ? `/?${query}` : "/");
+  }
 
   return (
     <div>
@@ -28,7 +77,6 @@ export default async function Home({
         products={productData.data}
         brands={brands}
         categories={categories}
-        productCategories={productCategories}
         pagination={{
           page: productData.page,
           pageCount: productData.pageCount,
