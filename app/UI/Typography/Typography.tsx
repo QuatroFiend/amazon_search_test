@@ -2,30 +2,31 @@ import Link from "next/link";
 import typography from "./typography.module.css";
 
 interface TypographyProps {
-  content: string;
+  children: React.ReactNode;
   variant?: "title" | "cardTitle" | "error" | "info" | "link";
   className?: string;
   href?: string;
 }
 
 const Typography = ({
-  content,
+  children,
   variant = "title",
   className = "",
   href = "#",
 }: TypographyProps) => {
+  const baseClass = typography.base || "";
   const variantClass = typography[variant] || "";
-  return (
-    <div>
-      {variant === "link" && href ? (
-        <Link href={href}>
-          <p className={`${variantClass} ${className}`}>{content}</p>
-        </Link>
-      ) : (
-        <p className={`${variantClass} ${className}`}>{content}</p>
-      )}
-    </div>
-  );
+  const textClassName = `${baseClass} ${variantClass} ${className}`.trim();
+
+  if (variant === "link" && href) {
+    return (
+      <Link href={href} className={textClassName}>
+        {children}
+      </Link>
+    );
+  }
+
+  return <p className={textClassName}>{children}</p>;
 };
 
 export default Typography;

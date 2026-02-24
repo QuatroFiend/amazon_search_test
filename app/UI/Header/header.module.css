@@ -1,0 +1,60 @@
+.header {
+  display: flex;
+  align-items: stretch;
+  padding: 0 1rem;
+  gap: 12px;
+  height: 60px;
+  width: 100%;
+  background-color: #131921;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+  z-index: 10;
+  isolation: isolate;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.searchArea {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  padding: 8px 0;
+  position: relative;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.searchOverlay {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 60px);
+  background: rgba(0, 0, 0, 0.42);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 9;
+}
+
+.searchOverlayActive {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}

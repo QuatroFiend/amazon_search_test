@@ -1,24 +1,42 @@
-import { IBrand, ICategory, IProduct, IProductCategory } from "@/app/api/products/productTypes";
 import ProductCardsContainer from "@/app/Components/ProductCard/ProductCardsContainer";
-import Typography from "@/app/UI/Typography/Typography";
 import styles from "./main_page.module.css";
+import Pagination, { IPagination } from "@/app/UI/Pagination/Pagination";
+import { IProduct, FacetCounts } from "@/app/api/products/types";
+import { IBrand } from "@/app/api/brands/IBrandTypes";
+import { ICategory } from "@/app/api/categories/ICategoriesTypes";
+import FilterBar from "@/app/Components/FilterBar/FilterBar";
+import EmptyState from "../../Components/EmptyState/EmptyState";
 
-
-interface MainPageProps{
-    products: IProduct[]|null
-    brands:IBrand[]|null
-    categories:ICategory[]|null
-    productCategories:IProductCategory[]|null
+interface MainPageProps {
+  products: IProduct[] | null;
+  brands: IBrand[] | null;
+  categories: ICategory[] | null;
+  facetCounts: FacetCounts;
+  pagination: IPagination;
 }
 
+const MainPage = ({
+  products,
+  brands,
+  categories,
+  facetCounts,
+  pagination,
+}: MainPageProps) => {
+  const hasProducts = (products?.length || 0) > 0;
 
-const MainPage = ({products,brands,categories,productCategories}: MainPageProps) => {
   return (
-    <div className={'page-container'}>
-      <Typography content={"MainPage"} variant={"title"} />
+    <div className={"page-container"}>
       <div className={styles.productCardsContainer}>
-        <ProductCardsContainer products={products} brands={brands}/>
+        <FilterBar categories={categories} brands={brands} facetCounts={facetCounts} />
+        <div className={styles.resultsArea}>
+          {hasProducts ? (
+            <ProductCardsContainer products={products} brands={brands} />
+          ) : (
+            <EmptyState />
+          )}
+        </div>
       </div>
+      <Pagination pagination={pagination} paginationPage={pagination.page} />
     </div>
   );
 };
