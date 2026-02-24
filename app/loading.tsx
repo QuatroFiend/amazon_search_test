@@ -1,8 +1,10 @@
+import styles from './loading.module.css'
+
 export default function Loading() {
   return (
-    <div className="loading-spinner-container">
-      <div className="loading-spinner" />
-      <p className="loading-text">Loading...</p>
+    <div className={styles.loadingSpinnerContainer}>
+      <div className={styles.loadingSpinner} />
+      <p className={styles.loadingText}>Loading...</p>
     </div>
   );
 }

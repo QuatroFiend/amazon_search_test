@@ -1,27 +1,34 @@
 "use client";
+
+import { useState } from "react";
 import { FilterAccordion } from "@/app/UI/FilterAccordion/FilterAccordion";
-import styles from "./filter_bar.module.css";
 import CheckboxFilter from "@/app/UI/CheckBox/CheckBox";
+import RadioButtonFilter from "@/app/UI/RadioButton/RadioButton";
+import { Button } from "@/app/UI/Button/Button";
+import { useFilters } from "@/app/Hooks/useFilters";
 import { IBrand } from "@/app/api/brands/IBrandTypes";
 import { ICategory } from "@/app/api/categories/ICategoriesTypes";
-import { useState } from "react";
-import RadioButtonFilter from "@/app/UI/RadioButton/RadioButton";
-import { useFilters } from "@/app/Hooks/useFilters";
-import { Button } from "@/app/UI/Button/Button";
+import { FacetCounts } from "@/app/api/products/types";
+import styles from "./filter_bar.module.css";
+
+type FilterKey = "brands" | "categories";
+
+type FilterEntity = (IBrand | ICategory) & { id: number; name: string };
 
 type FilterConfig<Entity> = {
+  key: FilterKey;
   title: string;
   field: keyof Entity;
-  getLabel?: (item: Entity) => string;
-  getValue?: (item: Entity) => string;
   items: Entity[] | null | undefined;
 };
 
 interface FilterBarProps {
   brands: IBrand[] | null;
   categories: ICategory[] | null;
+  facetCounts: FacetCounts;
 }
-export const FilterBar = ({ brands, categories }: FilterBarProps) => {
+
+export const FilterBar = ({ brands, categories, facetCounts }: FilterBarProps) => {
   const [openSections, setOpenSections] = useState<Set<string>>(new Set());
   const { filters: urlFilters, updateFilters, clearFilters } = useFilters();
 
@@ -34,15 +41,15 @@ export const FilterBar = ({ brands, categories }: FilterBarProps) => {
     });
   };
 
-  type FilterEntity = IBrand | ICategory;
-
   const filters: FilterConfig<FilterEntity>[] = [
     {
+      key: "brands",
       title: "Brands",
       field: "name",
       items: brands,
     },
     {
+      key: "categories",
       title: "Categories",
       field: "name",
       items: categories,
@@ -61,14 +68,14 @@ export const FilterBar = ({ brands, categories }: FilterBarProps) => {
 
         const options = filter.items.map((item) => {
           const value = String(item[filter.field]);
-          const label =
-            filter.getLabel?.(item) ?? String(item[filter.field] ?? "—");
+          const count = facetCounts[filter.key][item.id] || 0;
+          const label = `${value} (${count})`;
 
           return { label, value };
         });
 
         const isOpen = openSections.has(filter.title);
-        const filterKey = filter.title.toLowerCase() as "brands" | "categories";
+        const filterKey = filter.key;
         const initialValues = urlFilters[filterKey] || [];
 
         return (

@@ -1,34 +1,186 @@
 import { supabase } from "../supabase/supabase";
 import { PaginationParams } from "../types/pagination";
-import { ProductFilters } from "./types";
+import { IProduct } from "./IProductTypes";
+import { FacetCounts, ProductFilters } from "./types";
+
+type ProductsResult = {
+  data: IProduct[];
+  total: number;
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  facetCounts: FacetCounts;
+};
+
+type ProductCategoryRow = {
+  product_id: number;
+  category_id: number;
+};
+
+type ProductIdRow = {
+  id: number;
+};
+
+type ProductBrandRow = {
+  brand_id: number | null;
+};
+
+const getErrorMessage = (error: unknown): string => {
+  if (error && typeof error === "object" && "message" in error) {
+    const message = (error as { message?: string }).message;
+    return message || "Unknown error";
+  }
+
+  return "Unknown error";
+};
+
+const getProductIdsByCategory = async (categoryIds: number[]): Promise<number[]> => {
+  const { data, error } = await supabase
+    .from("product_categories")
+    .select("product_id")
+    .in("category_id", categoryIds);
+
+  if (error) {
+    console.error("Error fetching product categories:", error);
+    throw new Error(
+      `Failed to fetch product categories: ${getErrorMessage(error)}`,
+    );
+  }
+
+  return (data as ProductCategoryRow[] | null)?.map((row) => row.product_id) || [];
+};
+
+const buildBrandFacetCounts = async (
+  filters?: ProductFilters,
+): Promise<Record<number, number>> => {
+  let productIdsByCategory: number[] | null = null;
+
+  if (filters?.categoryIds && filters.categoryIds.length > 0) {
+    productIdsByCategory = await getProductIdsByCategory(filters.categoryIds);
+
+    if (productIdsByCategory.length === 0) {
+      return {};
+    }
+  }
+
+  let brandQuery = supabase.from("products").select("brand_id");
+
+  if (productIdsByCategory && productIdsByCategory.length > 0) {
+    brandQuery = brandQuery.in("id", productIdsByCategory);
+  }
+
+  const { data, error } = await brandQuery;
+
+  if (error) {
+    console.error("Error fetching brand facet counts:", error);
+    throw new Error(
+      `Failed to fetch brand facet counts: ${getErrorMessage(error)}`,
+    );
+  }
+
+  return ((data as ProductBrandRow[] | null) || []).reduce(
+    (accumulator, row) => {
+      if (typeof row.brand_id === "number") {
+        accumulator[row.brand_id] = (accumulator[row.brand_id] || 0) + 1;
+      }
+
+      return accumulator;
+    },
+    {} as Record<number, number>,
+  );
+};
+
+const buildCategoryFacetCounts = async (
+  filters?: ProductFilters,
+): Promise<Record<number, number>> => {
+  let productIdsByBrandFilter: number[] | null = null;
+
+  if (filters?.brandIds && filters.brandIds.length > 0) {
+    const { data: productsData, error: productsError } = await supabase
+      .from("products")
+      .select("id")
+      .in("brand_id", filters.brandIds);
+
+    if (productsError) {
+      console.error("Error fetching products for category facets:", productsError);
+      throw new Error(
+        `Failed to fetch products for category facets: ${getErrorMessage(productsError)}`,
+      );
+    }
+
+    productIdsByBrandFilter =
+      ((productsData as ProductIdRow[] | null) || []).map((product) => product.id);
+
+    if (productIdsByBrandFilter.length === 0) {
+      return {};
+    }
+  }
+
+  let categoryQuery = supabase.from("product_categories").select("category_id");
+
+  if (productIdsByBrandFilter && productIdsByBrandFilter.length > 0) {
+    categoryQuery = categoryQuery.in("product_id", productIdsByBrandFilter);
+  }
+
+  const { data, error } = await categoryQuery;
+
+  if (error) {
+    console.error("Error fetching category facet counts:", error);
+    throw new Error(
+      `Failed to fetch category facet counts: ${getErrorMessage(error)}`,
+    );
+  }
+
+  return ((data as ProductCategoryRow[] | null) || []).reduce(
+    (accumulator, row) => {
+      if (typeof row.category_id === "number") {
+        accumulator[row.category_id] = (accumulator[row.category_id] || 0) + 1;
+      }
+
+      return accumulator;
+    },
+    {} as Record<number, number>,
+  );
+};
+
+const buildFacetCounts = async (filters?: ProductFilters): Promise<FacetCounts> => {
+  const [brands, categories] = await Promise.all([
+    buildBrandFacetCounts(filters),
+    buildCategoryFacetCounts(filters),
+  ]);
+
+  return {
+    brands,
+    categories,
+  };
+};
 
 export const getProducts = async (
   pagination: PaginationParams,
   filters?: ProductFilters,
-) => {
+): Promise<ProductsResult> => {
   const { page, pageSize } = pagination;
   const requestedPage =
     Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
 
+  const facetCountsPromise = buildFacetCounts(filters);
+
   let productIdsByCategory: number[] | null = null;
 
   if (filters?.categoryIds && filters.categoryIds.length > 0) {
-    const { data: productCategories, error: categoryError } = await supabase
-      .from("product_categories")
-      .select("product_id")
-      .in("category_id", filters.categoryIds);
-
-    if (categoryError) {
-      console.error("Error fetching product categories:", categoryError);
-      throw new Error(
-        `Failed to fetch product categories: ${categoryError.message}`,
-      );
-    }
-
-    productIdsByCategory = productCategories?.map((pc) => pc.product_id) || [];
+    productIdsByCategory = await getProductIdsByCategory(filters.categoryIds);
 
     if (productIdsByCategory.length === 0) {
-      return { data: [], total: 0, page: 1, pageSize, pageCount: 0 };
+      const facetCounts = await facetCountsPromise;
+
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        pageSize,
+        pageCount: 0,
+        facetCounts,
+      };
     }
   }
 
@@ -40,7 +192,7 @@ export const getProducts = async (
     countQuery = countQuery.in("brand_id", filters.brandIds);
   }
 
-  if (productIdsByCategory) {
+  if (productIdsByCategory && productIdsByCategory.length > 0) {
     countQuery = countQuery.in("id", productIdsByCategory);
   }
 
@@ -56,7 +208,16 @@ export const getProducts = async (
   const safePage = pageCount > 0 ? Math.min(requestedPage, pageCount) : 1;
 
   if (total === 0) {
-    return { data: [], total, page: safePage, pageSize, pageCount };
+    const facetCounts = await facetCountsPromise;
+
+    return {
+      data: [],
+      total,
+      page: safePage,
+      pageSize,
+      pageCount,
+      facetCounts,
+    };
   }
 
   const from = (safePage - 1) * pageSize;
@@ -68,7 +229,7 @@ export const getProducts = async (
     dataQuery = dataQuery.in("brand_id", filters.brandIds);
   }
 
-  if (productIdsByCategory) {
+  if (productIdsByCategory && productIdsByCategory.length > 0) {
     dataQuery = dataQuery.in("id", productIdsByCategory);
   }
 
@@ -81,39 +242,45 @@ export const getProducts = async (
     }
 
     if (!allData || allData.length === 0) {
+      const facetCounts = await facetCountsPromise;
+
       return {
         data: [],
         total,
         page: safePage,
         pageSize,
         pageCount,
+        facetCounts,
       };
     }
 
-    const brandMap = allData.reduce(
-      (acc, item) => {
+    const products = allData as IProduct[];
+    const brandMap = products.reduce(
+      (accumulator, item) => {
         if (item.brand_id) {
-          acc[item.brand_id] = (acc[item.brand_id] || 0) + 1;
+          accumulator[item.brand_id] = (accumulator[item.brand_id] || 0) + 1;
         }
-        return acc;
+
+        return accumulator;
       },
       {} as Record<number, number>,
     );
 
-    const sortedData = allData.sort((a, b) => {
-      const countA = brandMap[a.brand_id] || 0;
-      const countB = brandMap[b.brand_id] || 0;
+    const sortedData = [...products].sort((left, right) => {
+      const countA = brandMap[left.brand_id] || 0;
+      const countB = brandMap[right.brand_id] || 0;
 
       if (countA !== countB) {
         return countB - countA;
       }
 
       return (
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        new Date(right.created_at).getTime() - new Date(left.created_at).getTime()
       );
     });
 
     const paginatedData = sortedData.slice(from, to + 1);
+    const facetCounts = await facetCountsPromise;
 
     return {
       data: paginatedData,
@@ -121,6 +288,7 @@ export const getProducts = async (
       page: safePage,
       pageSize,
       pageCount,
+      facetCounts,
     };
   }
 
@@ -147,11 +315,14 @@ export const getProducts = async (
     throw new Error(`Failed to fetch products: ${error.message}`);
   }
 
+  const facetCounts = await facetCountsPromise;
+
   return {
-    data: data || [],
+    data: (data || []) as IProduct[],
     total,
     page: safePage,
     pageSize,
     pageCount,
+    facetCounts,
   };
 };

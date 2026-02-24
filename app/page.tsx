@@ -1,9 +1,6 @@
 import MainPage from "./Pages/MainPage/MainPage";
 import { getProducts } from "./api/products/productService";
-import {
-  getCategories,
-  getProductCategories,
-} from "./api/categories/categoriesService";
+import { getCategories } from "./api/categories/categoriesService";
 import { getBrands } from "./api/brands/brandsService";
 import { ProductFilters, SortOption } from "./api/products/types";
 import { redirect } from "next/navigation";
@@ -15,24 +12,24 @@ export default async function Home({
     page?: string;
     brands?: string;
     categories?: string;
-    period?: string;
     sortBy?: string;
+    debugError?: string;
   }>;
 }) {
   const params = await searchParams;
+
+  if (process.env.NODE_ENV !== "production" && params.debugError === "1") {
+    throw new Error("Debug error boundary test");
+  }
+
   const parsedPage = Number(params.page);
   const page =
     Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
 
-  const [brands, categories, productCategories] = await Promise.all([
-    getBrands(),
-    getCategories(),
-    getProductCategories(),
-  ]);
+  const [brands, categories] = await Promise.all([getBrands(), getCategories()]);
 
   const brandParams = params.brands?.toString().split(",") || [];
   const categoriesParams = params.categories?.toString().split(",") || [];
-  const period = params.period || "7";
   const sortBy = (params.sortBy as SortOption) || "newest";
 
   const brandIds = brandParams
@@ -63,20 +60,19 @@ export default async function Home({
 
     if (params.brands) nextParams.set("brands", params.brands);
     if (params.categories) nextParams.set("categories", params.categories);
-    if (params.period) nextParams.set("period", params.period);
     if (params.sortBy) nextParams.set("sortBy", params.sortBy);
     if (productData.page > 1) nextParams.set("page", String(productData.page));
 
     const query = nextParams.toString();
     redirect(query ? `/?${query}` : "/");
   }
-
   return (
     <div>
       <MainPage
         products={productData.data}
         brands={brands}
         categories={categories}
+        facetCounts={productData.facetCounts}
         pagination={{
           page: productData.page,
           pageCount: productData.pageCount,

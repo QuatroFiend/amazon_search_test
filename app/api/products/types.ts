@@ -10,3 +10,8 @@ export interface ProductFilters {
   categoryIds?: number[];
   sortBy?: SortOption;
 }
+
+export type FacetCounts = {
+  brands: Record<number, number>;
+  categories: Record<number, number>;
+};
