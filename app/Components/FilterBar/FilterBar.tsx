@@ -67,9 +67,10 @@ export const FilterBar = ({ brands, categories, facetCounts }: FilterBarProps) =
         if (!filter.items?.length) return null;
 
         const options = filter.items.map((item) => {
-          const value = String(item[filter.field]);
+          const value = String(item.id);
+          const displayValue = String(item[filter.field]);
           const count = facetCounts[filter.key][item.id] || 0;
-          const label = `${value} (${count})`;
+          const label = `${displayValue} (${count})`;
 
           return { label, value };
         });
@@ -77,6 +78,7 @@ export const FilterBar = ({ brands, categories, facetCounts }: FilterBarProps) =
         const isOpen = openSections.has(filter.title);
         const filterKey = filter.key;
         const initialValues = urlFilters[filterKey] || [];
+        const checkboxStateKey = `${filterKey}-${initialValues.join(",")}`;
 
         return (
           <FilterAccordion
@@ -86,6 +88,7 @@ export const FilterBar = ({ brands, categories, facetCounts }: FilterBarProps) =
             onToggle={() => toggleSection(filter.title)}
           >
             <CheckboxFilter
+              key={checkboxStateKey}
               name={filter.title.toLowerCase().replace(/\s+/g, "-")}
               onChange={(name, values) => {
                 updateFilters(filterKey, values as string[]);

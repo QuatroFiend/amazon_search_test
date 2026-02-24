@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import Typography from "../Typography/Typography";
 import Icon from "../Icon/Icon";
 import styles from "./check_box.module.css";
@@ -10,6 +10,11 @@ type CheckboxFilterProps = {
   options: Array<{ label: string; value: string }>;
 };
 
+const normalizeValues = (values?: string[]) =>
+  Array.from(
+    new Set((values ?? []).map((option) => option.trim()).filter(Boolean)),
+  );
+
 const CheckboxFilter = ({
   name,
   onChange,
@@ -17,15 +22,24 @@ const CheckboxFilter = ({
   options,
 }: CheckboxFilterProps) => {
   const normalizedInitialOption = useMemo(
-    () => (initialOption ?? []).map((option) => option.toLowerCase()),
+    () => normalizeValues(initialOption),
     [initialOption],
   );
 
+  const [selectedValues, setSelectedValues] = useState<string[]>(
+    normalizedInitialOption,
+  );
+  const selectedValuesRef = useRef<string[]>(normalizedInitialOption);
+
   const handleCheckboxChange = (value: string) => {
-    const normalizedValue = value.toLowerCase();
-    const newValue = normalizedInitialOption.includes(normalizedValue)
-      ? normalizedInitialOption.filter((option) => option !== normalizedValue)
-      : [...normalizedInitialOption, normalizedValue];
+    const normalizedValue = value.trim();
+    const previousValues = selectedValuesRef.current;
+    const newValue = previousValues.includes(normalizedValue)
+      ? previousValues.filter((option) => option !== normalizedValue)
+      : [...previousValues, normalizedValue];
+
+    selectedValuesRef.current = newValue;
+    setSelectedValues(newValue);
 
     onChange(name, newValue);
   };
@@ -33,8 +47,8 @@ const CheckboxFilter = ({
   return (
     <div className={styles.wrapper}>
       {options?.map((option) => {
-        const normalizedValue = option.value.toLowerCase();
-        const isChecked = normalizedInitialOption.includes(normalizedValue);
+        const normalizedValue = option.value.trim();
+        const isChecked = selectedValues.includes(normalizedValue);
 
         return (
           <label key={option.value} className={styles.label}>
