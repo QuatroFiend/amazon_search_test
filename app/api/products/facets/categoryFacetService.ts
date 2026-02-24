@@ -1,6 +1,7 @@
 import { supabase } from "../../supabase/supabase";
 import { ProductFilters } from "../types";
 import { getErrorMessage } from "../helpers/getErrorMessage";
+import { applyFilters } from "../helpers/applyFilters";
 
 type ProductIdRow = {
   id: number;
@@ -15,11 +16,13 @@ export const buildCategoryFacetCounts = async (
 ): Promise<Record<number, number>> => {
   let productIdsByBrandFilter: number[] | null = null;
 
-  if (filters?.brandIds && filters.brandIds.length > 0) {
-    const { data: productsData, error: productsError } = await supabase
-      .from("products")
-      .select("id")
-      .in("brand_id", filters.brandIds);
+  if ((filters?.brandIds && filters.brandIds.length > 0) || filters?.q?.trim()) {
+    let productQuery = supabase.from("products").select("id");
+    productQuery = applyFilters(productQuery, {
+      brandIds: filters?.brandIds,
+      q: filters?.q,
+    });
+    const { data: productsData, error: productsError } = await productQuery;
 
     if (productsError) {
       console.error("Error fetching products for category facets:", productsError);

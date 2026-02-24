@@ -13,6 +13,7 @@ export default async function Home({
     brands?: string;
     categories?: string;
     sortBy?: string;
+    q?: string;
     debugError?: string;
   }>;
 }) {
@@ -30,6 +31,7 @@ export default async function Home({
 
   const brandParams = params.brands?.toString().split(",") || [];
   const categoriesParams = params.categories?.toString().split(",") || [];
+  const q = params.q?.toString().trim() || "";
   const sortBy = (params.sortBy as SortOption) || "newest";
 
   const brandIds = brandParams
@@ -51,6 +53,7 @@ export default async function Home({
     brandIds: brandIds.length > 0 ? brandIds : undefined,
     categoryIds: categoryIds.length > 0 ? categoryIds : undefined,
     sortBy,
+    q: q || undefined,
   };
 
   const productData = await getProducts({ page, pageSize: 12 }, filters);
@@ -61,6 +64,7 @@ export default async function Home({
     if (params.brands) nextParams.set("brands", params.brands);
     if (params.categories) nextParams.set("categories", params.categories);
     if (params.sortBy) nextParams.set("sortBy", params.sortBy);
+    if (q) nextParams.set("q", q);
     if (productData.page > 1) nextParams.set("page", String(productData.page));
 
     const query = nextParams.toString();

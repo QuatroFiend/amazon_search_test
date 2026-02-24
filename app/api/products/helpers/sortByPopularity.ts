@@ -1,4 +1,4 @@
-import { IProduct } from "../IProductTypes";
+import { IProduct } from "../types";
 
 export const sortByPopularity = (products: IProduct[]): IProduct[] => {
   const brandMap = products.reduce(

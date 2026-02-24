@@ -37,6 +37,7 @@ export const getProducts = async (
   countQuery = applyFilters(countQuery, {
     brandIds: filters?.brandIds,
     productIds: productIdsByCategory,
+    q: filters?.q,
   });
 
   const { count, error: countError } = await countQuery;
@@ -64,6 +65,7 @@ export const getProducts = async (
   dataQuery = applyFilters(dataQuery, {
     brandIds: filters?.brandIds,
     productIds: productIdsByCategory,
+    q: filters?.q,
   });
 
   if (filters?.sortBy === "popular") {

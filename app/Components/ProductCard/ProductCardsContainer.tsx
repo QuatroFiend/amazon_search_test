@@ -1,4 +1,4 @@
-import {  IProduct } from "@/app/api/products/IProductTypes";
+import { IProduct } from "@/app/api/products/types";
 import { createBrandMap } from "@/app/utils/getBrandName";
 import ProductCard from "./ProductCard";
 import styles from "./product_card_container.module.css";

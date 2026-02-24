@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import Typography from "../Typography/Typography";
 import Icon from "../Icon/Icon";
 import styles from "./check_box.module.css";
@@ -16,37 +16,25 @@ const CheckboxFilter = ({
   initialOption,
   options,
 }: CheckboxFilterProps) => {
-  const normalizedInitialOption = initialOption ?? [];
-
-  const [prevInitial, setPrevInitial] = useState(normalizedInitialOption);
-  const [selectedOptions, setSelectedOptions] = useState<string[]>(
-    normalizedInitialOption,
+  const normalizedInitialOption = useMemo(
+    () => (initialOption ?? []).map((option) => option.toLowerCase()),
+    [initialOption],
   );
-
-  if (JSON.stringify(normalizedInitialOption) !== JSON.stringify(prevInitial)) {
-    setPrevInitial(normalizedInitialOption);
-    setSelectedOptions(normalizedInitialOption);
-  }
 
   const handleCheckboxChange = (value: string) => {
     const normalizedValue = value.toLowerCase();
+    const newValue = normalizedInitialOption.includes(normalizedValue)
+      ? normalizedInitialOption.filter((option) => option !== normalizedValue)
+      : [...normalizedInitialOption, normalizedValue];
 
-    setSelectedOptions((prevSelected) => {
-      const newValue = prevSelected.includes(normalizedValue)
-        ? prevSelected.filter((option) => option !== normalizedValue)
-        : [...prevSelected, normalizedValue];
-
-      onChange(name, newValue);
-
-      return newValue;
-    });
+    onChange(name, newValue);
   };
 
   return (
     <div className={styles.wrapper}>
       {options?.map((option) => {
         const normalizedValue = option.value.toLowerCase();
-        const isChecked = selectedOptions.includes(normalizedValue);
+        const isChecked = normalizedInitialOption.includes(normalizedValue);
 
         return (
           <label key={option.value} className={styles.label}>
