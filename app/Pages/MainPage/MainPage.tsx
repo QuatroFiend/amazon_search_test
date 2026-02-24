@@ -3,19 +3,16 @@ import Typography from "@/app/UI/Typography/Typography";
 import styles from "./main_page.module.css";
 import Pagination, { IPagination } from "@/app/UI/Pagination/Pagination";
 import { IProduct } from "@/app/api/products/IProductTypes";
+import { FacetCounts } from "@/app/api/products/types";
 import { IBrand } from "@/app/api/brands/IBrandTypes";
-import {
-  ICategory,
-  IProductCategory,
-} from "@/app/api/categories/ICategoriesTypes";
-import SearchBar from "@/app/Components/SearchBar/SearchBar";
-import Header from "@/app/UI/Header/Header";
+import { ICategory } from "@/app/api/categories/ICategoriesTypes";
+import FilterBar from "@/app/Components/FilterBar/FilterBar";
 
 interface MainPageProps {
   products: IProduct[] | null;
   brands: IBrand[] | null;
   categories: ICategory[] | null;
-  productCategories: IProductCategory[] | null;
+  facetCounts: FacetCounts;
   pagination: IPagination;
 }
 
@@ -23,13 +20,22 @@ const MainPage = ({
   products,
   brands,
   categories,
-  productCategories,
+  facetCounts,
   pagination,
 }: MainPageProps) => {
   return (
     <div className={"page-container"}>
       <div className={styles.productCardsContainer}>
-        <ProductCardsContainer products={products} brands={brands} />
+        <FilterBar
+          categories={categories}
+          brands={brands}
+          facetCounts={facetCounts}
+        />
+        {products?.length === 0 ? (
+          <Typography variant={"info"}>Ничего не найдено</Typography>
+        ) : (
+          <ProductCardsContainer products={products} brands={brands} />
+        )}
       </div>
       <Pagination pagination={pagination} paginationPage={pagination.page} />
     </div>

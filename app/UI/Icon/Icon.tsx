@@ -1,37 +1,57 @@
-import Image from "next/image";
-import ArrowRight from "./icons/arrow-right.svg";
-import ArrowLeft from "./icons/arrow-left.svg";
-import ArrowDown from "./icons/arrow-down.svg";
-import Search from './icons/search.svg'
-import Menu from './icons/menu.svg'
+import ArrowRight from "./icons/ArrowRight";
+import ArrowLeft from "./icons/ArrowLeft";
+import ArrowDown from "./icons/ArrowDown";
+import ArrowUp from "./icons/ArrowUp";
+import Search from "./icons/Search";
+import Menu from "./icons/Menu";
+import CheckboxChecked from "./icons/CheckboxChecked";
+import CheckboxUnchecked from "./icons/CheckboxUnchecked";
+import { JSX, SVGProps } from "react";
 
-export type IconName = "ArrowRight" | "ArrowLeft" | "Search" | "Menu" | "ArrowDown";
+export type IconName =
+  | "ArrowRight"
+  | "ArrowLeft"
+  | "Search"
+  | "Menu"
+  | "ArrowDown"
+  | "ArrowUp"
+  | "CheckboxChecked"
+  | "CheckboxUnchecked";
 
 interface IconProps {
   name: IconName;
   width?: number;
   height?: number;
+  color?: string;
   className?: string;
 }
 
-const icons: Record<IconName, string> = {
+const icons = {
   ArrowRight,
   ArrowLeft,
   ArrowDown,
+  ArrowUp,
   Search,
   Menu,
-};
+  CheckboxChecked,
+  CheckboxUnchecked,
+} satisfies Record<IconName, (props: SVGProps<SVGSVGElement>) => JSX.Element>;
 
-const Icon = ({ name, width = 16, height = 16, className }: IconProps) => {
+export default function Icon({
+  name,
+  width = 16,
+  height = 16,
+  color,
+  className,
+}: IconProps) {
+  const SvgIcon = icons[name];
+
   return (
-    <Image
-      src={icons[name]}
-      alt={name}
+    <SvgIcon
       width={width}
       height={height}
       className={className}
+      style={color ? { color } : undefined}
     />
   );
-};
-
-export default Icon;
+}

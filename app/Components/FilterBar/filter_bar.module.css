@@ -1,0 +1,17 @@
+.filterBarWrapper{
+    min-height: 600px;
+    background-color: rgba(215, 215, 215, 0.833);
+    margin: 20 0 20 0;
+    padding: 10 16 10 16;
+    border-radius: 12px;
+    max-width: 1200;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px
+}
+
+.clearAllFilters{
+    display: flex;
+    flex-grow:1
+}
