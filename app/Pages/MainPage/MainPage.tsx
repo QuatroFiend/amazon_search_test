@@ -2,7 +2,7 @@ import ProductCardsContainer from "@/app/Components/ProductCard/ProductCardsCont
 import Typography from "@/app/UI/Typography/Typography";
 import styles from "./main_page.module.css";
 import Pagination, { IPagination } from "@/app/UI/Pagination/Pagination";
-import { IProduct } from "@/app/api/products/IProductTypes";
+import { IProduct } from "@/app/api/products/types";
 import { FacetCounts } from "@/app/api/products/types";
 import { IBrand } from "@/app/api/brands/IBrandTypes";
 import { ICategory } from "@/app/api/categories/ICategoriesTypes";

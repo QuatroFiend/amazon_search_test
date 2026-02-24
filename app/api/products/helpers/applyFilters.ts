@@ -1,6 +1,11 @@
-export const applyFilters = <T extends { in: (column: string, values: number[]) => T }>(
+export const applyFilters = <
+  T extends {
+    in: (column: string, values: number[]) => T;
+    ilike: (column: string, pattern: string) => T;
+  },
+>(
   query: T,
-  filters: { brandIds?: number[]; productIds?: number[] | null }
+  filters: { brandIds?: number[]; productIds?: number[] | null; q?: string },
 ): T => {
   let result = query;
 
@@ -10,6 +15,10 @@ export const applyFilters = <T extends { in: (column: string, values: number[]) 
 
   if (filters.productIds && filters.productIds.length > 0) {
     result = result.in("id", filters.productIds);
+  }
+
+  if (filters.q?.trim()) {
+    result = result.ilike("name", `%${filters.q.trim()}%`);
   }
 
   return result;

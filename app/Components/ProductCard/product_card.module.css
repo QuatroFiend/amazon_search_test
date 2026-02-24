@@ -7,6 +7,7 @@
   transition: box-shadow 0.2s ease;
   cursor: pointer;
   background-color: #ffffff;
+  max-height: 400px;
 }
 
 .cardWrapper:hover {

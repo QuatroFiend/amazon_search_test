@@ -55,8 +55,16 @@ export function useFilters() {
   );
 
   const clearFilters = useCallback(() => {
-    router.push(pathname, { scroll: false });
-  }, [pathname, router]);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("brands");
+    params.delete("categories");
+    params.delete("sortBy");
+    params.delete("page");
+
+    const query = params.toString();
+    const nextUrl = query ? `${pathname}?${query}` : pathname;
+    router.push(nextUrl, { scroll: false });
+  }, [searchParams, pathname, router]);
 
   return {
     filters: getFilterValues(),

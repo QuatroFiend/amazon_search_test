@@ -18,6 +18,7 @@ export interface ProductFilters {
   brandIds?: number[];
   categoryIds?: number[];
   sortBy?: SortOption;
+  q?: string;
 }
 
 export type FacetCounts = {

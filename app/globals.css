@@ -23,14 +23,19 @@ body {
   width: 100%;
   margin: 0 auto;
   justify-content: center;
-  align-items: center
+  align-items: center;
+  position: relative;
+  z-index: 0;
+  background: #ffffff;
 }
 
 
 .page-container{
   padding: 0 40 0 40;
   display: flex;
-  flex-direction: column
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 

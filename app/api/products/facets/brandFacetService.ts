@@ -2,6 +2,7 @@ import { supabase } from "../../supabase/supabase";
 import { ProductFilters } from "../types";
 import { getErrorMessage } from "../helpers/getErrorMessage";
 import { getProductIdsByCategory } from "../queries/getProductByCategoryId";
+import { applyFilters } from "../helpers/applyFilters";
 
 type ProductBrandRow = {
   brand_id: number | null;
@@ -21,10 +22,10 @@ export const buildBrandFacetCounts = async (
   }
 
   let brandQuery = supabase.from("products").select("brand_id");
-
-  if (productIdsByCategory && productIdsByCategory.length > 0) {
-    brandQuery = brandQuery.in("id", productIdsByCategory);
-  }
+  brandQuery = applyFilters(brandQuery, {
+    productIds: productIdsByCategory,
+    q: filters?.q,
+  });
 
   const { data, error } = await brandQuery;
 
