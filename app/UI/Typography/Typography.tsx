@@ -14,17 +14,19 @@ const Typography = ({
   className = "",
   href = "#",
 }: TypographyProps) => {
+  const baseClass = typography.base || "";
   const variantClass = typography[variant] || "";
+  const textClassName = `${baseClass} ${variantClass} ${className}`.trim();
 
   if (variant === "link" && href) {
     return (
-      <Link href={href} className={`${variantClass} ${className}`}>
+      <Link href={href} className={textClassName}>
         {children}
       </Link>
     );
   }
 
-  return <p className={`${variantClass} ${className}`}>{children}</p>;
+  return <p className={textClassName}>{children}</p>;
 };
 
 export default Typography;

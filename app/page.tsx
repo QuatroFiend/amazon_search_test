@@ -18,36 +18,31 @@ export default async function Home({
   }>;
 }) {
   const params = await searchParams;
-
-  if (process.env.NODE_ENV !== "production" && params.debugError === "1") {
-    throw new Error("Debug error boundary test");
-  }
-
+  if (params.debugError) throw new Error(params.debugError);
   const parsedPage = Number(params.page);
   const page =
     Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
 
-  const [brands, categories] = await Promise.all([getBrands(), getCategories()]);
+  const [brands, categories] = await Promise.all([
+    getBrands(),
+    getCategories(),
+  ]);
 
-  const brandParams = params.brands?.toString().split(",") || [];
-  const categoriesParams = params.categories?.toString().split(",") || [];
+  const parseIdsFromParam = (rawValue?: string): number[] => {
+    if (!rawValue) return [];
+
+    const parsedIds = rawValue
+      .split(",")
+      .map((value) => Number.parseInt(value.trim(), 10))
+      .filter((id) => Number.isInteger(id) && id > 0);
+
+    return Array.from(new Set(parsedIds));
+  };
+
+  const brandIds = parseIdsFromParam(params.brands?.toString());
+  const categoryIds = parseIdsFromParam(params.categories?.toString());
   const q = params.q?.toString().trim() || "";
   const sortBy = (params.sortBy as SortOption) || "newest";
-
-  const brandIds = brandParams
-    .map(
-      (name) =>
-        brands?.find((b) => b.name.toLowerCase() === name.toLowerCase())?.id,
-    )
-    .filter((id): id is number => id !== undefined);
-
-  const categoryIds = categoriesParams
-    .map(
-      (name) =>
-        categories?.find((c) => c.name.toLowerCase() === name.toLowerCase())
-          ?.id,
-    )
-    .filter((id): id is number => id !== undefined);
 
   const filters: ProductFilters = {
     brandIds: brandIds.length > 0 ? brandIds : undefined,
@@ -61,8 +56,10 @@ export default async function Home({
   if (productData.page !== page) {
     const nextParams = new URLSearchParams();
 
-    if (params.brands) nextParams.set("brands", params.brands);
-    if (params.categories) nextParams.set("categories", params.categories);
+    if (brandIds.length > 0) nextParams.set("brands", brandIds.join(","));
+    if (categoryIds.length > 0) {
+      nextParams.set("categories", categoryIds.join(","));
+    }
     if (params.sortBy) nextParams.set("sortBy", params.sortBy);
     if (q) nextParams.set("q", q);
     if (productData.page > 1) nextParams.set("page", String(productData.page));
