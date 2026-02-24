@@ -5,6 +5,7 @@ import { IProduct, FacetCounts } from "@/app/api/products/types";
 import { IBrand } from "@/app/api/brands/IBrandTypes";
 import { ICategory } from "@/app/api/categories/ICategoriesTypes";
 import FilterBar from "@/app/Components/FilterBar/FilterBar";
+import EmptyState from "../../Components/EmptyState/EmptyState";
 
 interface MainPageProps {
   products: IProduct[] | null;
@@ -31,12 +32,7 @@ const MainPage = ({
           {hasProducts ? (
             <ProductCardsContainer products={products} brands={brands} />
           ) : (
-            <section className={styles.emptyState}>
-              <h2 className={styles.emptyStateTitle}>No products found</h2>
-              <p className={styles.emptyStateText}>
-                Try changing filters or search query.
-              </p>
-            </section>
+            <EmptyState />
           )}
         </div>
       </div>
