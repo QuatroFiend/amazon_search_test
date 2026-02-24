@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Amazon Product Search MVP
 
-## Getting Started
+MVP e-commerce catalog with server-side faceted search on Next.js 16 + Supabase.
 
-First, run the development server:
+## Demo
+- Live: `https://little-amazon-project.vercel.app/`
+- Repository: `https://github.com/QuatroFiend/amazon_search_test`
 
+## What is implemented
+- Text search with partial match (`ILIKE`).
+- Facet filters:
+  - Brand (multi-select)
+  - Category (multi-select)
+- Dynamic facet counts based on active filters.
+- URL-driven state for `q`, `brands`, `categories`, `sortBy`, `page`.
+- Pagination with invalid-page normalization (redirect to valid page).
+- Loading and error fallbacks: `loading.tsx`, `error.tsx`, `global-error.tsx`.
+
+## Tech Stack
+- Next.js 16 (App Router, Server Components)
+- React 19
+- TypeScript
+- Supabase (PostgreSQL)
+- CSS Modules
+
+## Local setup
+
+### Prerequisites
+- Node.js 20+
+- npm
+- Supabase project
+
+### 1) Install
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2) Environment
+Create `.env.local`:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3) Database
+Use this template/setup:
+- https://github.com/uibakery-templates/faceted-search-database
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4) Run
+```bash
+npm run dev
+```
 
-## Learn More
+Open `http://localhost:3000`
 
-To learn more about Next.js, take a look at the following resources:
+### 5) Production build
+```bash
+npm run build
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## URL state example
+```text
+/?q=laptop&brands=1,5&categories=3&sortBy=popular&page=2
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Known limitations
+- `popular` sorting is computed in app code (not SQL-level ranking).
+- Facet counts are currently aggregated in Node.js (`reduce`), not `GROUP BY`.
+- UI is functional MVP quality; visual polish can be improved.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Engineering notes
+- [ENGINEERING_NOTES_RU.md](./ENGINEERING_NOTES_RU.md) - detailed decisions and trade-offs (RU)
+- [ENGINEERING_NOTES.md](./ENGINEERING_NOTES.md) - detailed decisions and trade-offs (EN)
