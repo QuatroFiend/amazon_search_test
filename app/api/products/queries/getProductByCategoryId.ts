@@ -20,5 +20,10 @@ export const getProductIdsByCategory = async (
     );
   }
 
-  return (data as ProductCategoryRow[] | null)?.map((row) => row.product_id) || [];
+  const productIds = (data as ProductCategoryRow[] | null)?.map((row) => row.product_id) || [];
+
+  // Remove duplicates - a product can belong to multiple selected categories
+  const uniqueProductIds = [...new Set(productIds)];
+
+  return uniqueProductIds;
 };
