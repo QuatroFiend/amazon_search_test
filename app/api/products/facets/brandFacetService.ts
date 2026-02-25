@@ -1,33 +1,19 @@
 import { supabase } from "../../supabase/supabase";
 import { ProductFilters } from "../types";
 import { getErrorMessage } from "../helpers/getErrorMessage";
-import { getProductIdsByCategory } from "../queries/getProductByCategoryId";
-import { applyFilters } from "../helpers/applyFilters";
 
-type ProductBrandRow = {
-  brand_id: number | null;
+type BrandCountRow = {
+  brand_id: number;
+  count: number;
 };
 
 export const buildBrandFacetCounts = async (
   filters?: ProductFilters,
 ): Promise<Record<number, number>> => {
-  let productIdsByCategory: number[] | null = null;
-
-  if (filters?.categoryIds && filters.categoryIds.length > 0) {
-    productIdsByCategory = await getProductIdsByCategory(filters.categoryIds);
-
-    if (productIdsByCategory.length === 0) {
-      return {};
-    }
-  }
-
-  let brandQuery = supabase.from("products").select("brand_id");
-  brandQuery = applyFilters(brandQuery, {
-    productIds: productIdsByCategory,
-    q: filters?.q,
+  const { data, error } = await supabase.rpc("get_brand_facet_counts", {
+    p_category_ids: filters?.categoryIds || null,
+    p_search_query: filters?.q?.trim() || null,
   });
-
-  const { data, error } = await brandQuery;
 
   if (error) {
     console.error("Error fetching brand facet counts:", error);
@@ -36,14 +22,15 @@ export const buildBrandFacetCounts = async (
     );
   }
 
-  return ((data as ProductBrandRow[] | null) || []).reduce(
-    (accumulator, row) => {
-      if (typeof row.brand_id === "number") {
-        accumulator[row.brand_id] = (accumulator[row.brand_id] || 0) + 1;
-      }
+  const result: Record<number, number> = {};
 
-      return accumulator;
-    },
-    {} as Record<number, number>,
-  );
+  if (Array.isArray(data)) {
+    for (const row of data as BrandCountRow[]) {
+      if (typeof row.brand_id === "number" && typeof row.count === "number") {
+        result[row.brand_id] = row.count;
+      }
+    }
+  }
+
+  return result;
 };

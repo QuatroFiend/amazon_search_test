@@ -5,10 +5,7 @@ import { buildFacetCounts } from "./facets/buildFacetCounts";
 import { sortByPopularity } from "./helpers/sortByPopularity";
 import { getErrorMessage } from "./helpers/getErrorMessage";
 import { buildEmptyResult } from "./helpers/buildEmptyResult";
-import { getProductIdsByCategory } from "./queries/getProductByCategoryId";
-import { applyFilters } from "./helpers/applyFilters";
 import { calculatePagination } from "./helpers/calculatePagination";
-import { applySorting } from "./helpers/applySorting";
 
 export const getProducts = async (
   pagination: PaginationParams,
@@ -20,27 +17,14 @@ export const getProducts = async (
 
   const facetCountsPromise = buildFacetCounts(filters);
 
-  let productIdsByCategory: number[] | null = null;
-
-  if (filters?.categoryIds && filters.categoryIds.length > 0) {
-    productIdsByCategory = await getProductIdsByCategory(filters.categoryIds);
-
-    if (productIdsByCategory.length === 0) {
-      return buildEmptyResult(1, pageSize, 0, facetCountsPromise);
+  const { data: countData, error: countError } = await supabase.rpc(
+    'count_filtered_products',
+    {
+      p_category_ids: filters?.categoryIds || null,
+      p_brand_ids: filters?.brandIds || null,
+      p_search_query: filters?.q?.trim() || null,
     }
-  }
-
-  let countQuery = supabase
-    .from("products")
-    .select("id", { count: "exact", head: true });
-
-  countQuery = applyFilters(countQuery, {
-    brandIds: filters?.brandIds,
-    productIds: productIdsByCategory,
-    q: filters?.q,
-  });
-
-  const { count, error: countError } = await countQuery;
+  );
 
   if (countError) {
     console.error("Error fetching products count:", countError);
@@ -49,7 +33,7 @@ export const getProducts = async (
     );
   }
 
-  const total = count || 0;
+  const total = countData || 0;
   const { pageCount, safePage, from, to } = calculatePagination(
     requestedPage,
     pageSize,
@@ -60,16 +44,18 @@ export const getProducts = async (
     return buildEmptyResult(safePage, pageSize, pageCount, facetCountsPromise);
   }
 
-  let dataQuery = supabase.from("products").select("*");
-
-  dataQuery = applyFilters(dataQuery, {
-    brandIds: filters?.brandIds,
-    productIds: productIdsByCategory,
-    q: filters?.q,
-  });
-
   if (filters?.sortBy === "popular") {
-    const { data: allData, error: allError } = await dataQuery;
+    const { data: allData, error: allError } = await supabase.rpc(
+      'get_filtered_products',
+      {
+        p_category_ids: filters?.categoryIds || null,
+        p_brand_ids: filters?.brandIds || null,
+        p_search_query: filters?.q?.trim() || null,
+        p_sort_by: 'newest', 
+        p_offset: 0,
+        p_limit: 100000,
+      }
+    );
 
     if (allError) {
       console.error("Error fetching products:", allError);
@@ -90,9 +76,17 @@ export const getProducts = async (
     };
   }
 
-  dataQuery = applySorting(dataQuery, filters?.sortBy);
-
-  const { data, error } = await dataQuery.range(from, to);
+  const { data, error } = await supabase.rpc(
+    'get_filtered_products',
+    {
+      p_category_ids: filters?.categoryIds || null,
+      p_brand_ids: filters?.brandIds || null,
+      p_search_query: filters?.q?.trim() || null,
+      p_sort_by: filters?.sortBy || 'newest',
+      p_offset: from,
+      p_limit: pageSize,
+    }
+  );
 
   if (error) {
     console.error("Error fetching products:", error);

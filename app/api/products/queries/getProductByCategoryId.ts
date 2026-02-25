@@ -20,5 +20,9 @@ export const getProductIdsByCategory = async (
     );
   }
 
-  return (data as ProductCategoryRow[] | null)?.map((row) => row.product_id) || [];
+  const productIds = (data as ProductCategoryRow[] | null)?.map((row) => row.product_id) || [];
+
+  const uniqueProductIds = [...new Set(productIds)];
+
+  return uniqueProductIds;
 };
