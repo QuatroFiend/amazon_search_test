@@ -17,7 +17,6 @@ export const getProducts = async (
 
   const facetCountsPromise = buildFacetCounts(filters);
 
-  // Use RPC function to count filtered products
   const { data: countData, error: countError } = await supabase.rpc(
     'count_filtered_products',
     {
@@ -45,7 +44,6 @@ export const getProducts = async (
     return buildEmptyResult(safePage, pageSize, pageCount, facetCountsPromise);
   }
 
-  // For 'popular' sorting, we need to fetch all products and sort in-app
   if (filters?.sortBy === "popular") {
     const { data: allData, error: allError } = await supabase.rpc(
       'get_filtered_products',
@@ -53,9 +51,9 @@ export const getProducts = async (
         p_category_ids: filters?.categoryIds || null,
         p_brand_ids: filters?.brandIds || null,
         p_search_query: filters?.q?.trim() || null,
-        p_sort_by: 'newest', // default sort for fetching before popularity sort
+        p_sort_by: 'newest', 
         p_offset: 0,
-        p_limit: 100000, // Get all for sorting
+        p_limit: 100000,
       }
     );
 
@@ -78,7 +76,6 @@ export const getProducts = async (
     };
   }
 
-  // For other sorting, use RPC function with pagination
   const { data, error } = await supabase.rpc(
     'get_filtered_products',
     {
