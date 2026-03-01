@@ -7,7 +7,7 @@ type CheckboxFilterProps = {
   name: string;
   onChange: (name: string, value: string | string[]) => void;
   initialOption: string[];
-  options: Array<{ label: string; value: string }>;
+  options: Array<{ label: string; value: string; disabled?: boolean }>;
 };
 
 const normalizeValues = (values?: string[]) =>
@@ -31,7 +31,9 @@ const CheckboxFilter = ({
   );
   const selectedValuesRef = useRef<string[]>(normalizedInitialOption);
 
-  const handleCheckboxChange = (value: string) => {
+  const handleCheckboxChange = (value: string, disabled?: boolean) => {
+    if (disabled) return;
+
     const normalizedValue = value.trim();
     const previousValues = selectedValuesRef.current;
     const newValue = previousValues.includes(normalizedValue)
@@ -43,28 +45,33 @@ const CheckboxFilter = ({
 
     onChange(name, newValue);
   };
-
+  
   return (
     <div className={styles.wrapper}>
       {options?.map((option) => {
         const normalizedValue = option.value.trim();
         const isChecked = selectedValues.includes(normalizedValue);
+        const isDisabled = option.disabled || false;
 
         return (
-          <label key={option.value} className={styles.label}>
+          <label
+            key={option.value}
+            className={`${styles.label} ${isDisabled ? styles.labelDisabled : ""}`}
+          >
             <input
               type="checkbox"
               name={name}
               value={option.value}
               checked={isChecked}
-              onChange={() => handleCheckboxChange(option.value)}
+              disabled={isDisabled}
+              onChange={() => handleCheckboxChange(option.value, isDisabled)}
               className={styles.hiddenInput}
             />
 
             <span
               className={`${styles.checkbox} ${
                 isChecked ? styles.checkboxActive : ""
-              }`}
+              } ${isDisabled ? styles.checkboxDisabled : ""}`}
             >
               {isChecked && (
                 <Icon
@@ -78,7 +85,7 @@ const CheckboxFilter = ({
 
             <Typography
               variant="info"
-              className={`${styles.text} ${isChecked ? styles.textActive : ""}`}
+              className={`${styles.text} ${isChecked ? styles.textActive : ""} ${isDisabled ? styles.textDisabled : ""}`}
             >
               {option.label}
             </Typography>
