@@ -15,6 +15,11 @@
   padding: 11px 12px;
 }
 
+.labelDisabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .hiddenInput {
   display: none;
 }
@@ -36,6 +41,10 @@
   border-color: #18016b;
 }
 
+.checkboxDisabled {
+  opacity: 0.5;
+}
+
 .text {
   font-size: 14px;
   line-height: 21.7px;
@@ -46,4 +55,8 @@
 
 .textActive {
   color: #000000;
+}
+
+.textDisabled {
+  opacity: 0.5;
 }

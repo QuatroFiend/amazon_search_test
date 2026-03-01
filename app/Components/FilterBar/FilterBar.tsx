@@ -10,6 +10,8 @@ import { IBrand } from "@/app/api/brands/IBrandTypes";
 import { ICategory } from "@/app/api/categories/ICategoriesTypes";
 import { FacetCounts } from "@/app/api/products/types";
 import styles from "./filter_bar.module.css";
+import IconButton from "@/app/UI/IconButton/IconButton";
+import { useFilterChildrensSort } from "@/app/Hooks/useFilterChildrensSort";
 
 type FilterKey = "brands" | "categories";
 
@@ -28,9 +30,20 @@ interface FilterBarProps {
   facetCounts: FacetCounts;
 }
 
-export const FilterBar = ({ brands, categories, facetCounts }: FilterBarProps) => {
+export const FilterBar = ({
+  brands,
+  categories,
+  facetCounts,
+}: FilterBarProps) => {
   const [openSections, setOpenSections] = useState<Set<string>>(new Set());
   const { filters: urlFilters, updateFilters, clearFilters } = useFilters();
+  const {
+    sortFilterItems,
+    toggleCountSort,
+    toggleNameSort,
+    isSortByCountAsc,
+    isSortByNameAsc,
+  } = useFilterChildrensSort();
 
   const toggleSection = (title: string) => {
     setOpenSections((prev) => {
@@ -63,16 +76,45 @@ export const FilterBar = ({ brands, categories, facetCounts }: FilterBarProps) =
 
   return (
     <div className={styles.filterBarWrapper}>
+      <div className={styles.iconsContainer}>
+        <IconButton
+          iconName="Sort"
+          iconHeight={20}
+          iconWidth={20}
+          onClick={toggleCountSort}
+          className={
+            isSortByCountAsc
+              ? styles.sortByCountButtonActive
+              : styles.sortByButton
+          }
+        />
+        <IconButton
+          iconName="SecondSort"
+          iconHeight={20}
+          iconWidth={20}
+          onClick={toggleNameSort}
+          className={
+            !isSortByNameAsc
+              ? styles.sortByNameButtonActive
+              : styles.sortByButton
+          }
+        />
+      </div>
       {filters.map((filter) => {
         if (!filter.items?.length) return null;
 
-        const options = filter.items.map((item) => {
+        const sortedItems = sortFilterItems(
+          filter.items,
+          facetCounts[filter.key],
+        );
+
+        const options = sortedItems.map((item) => {
           const value = String(item.id);
           const displayValue = String(item[filter.field]);
           const count = facetCounts[filter.key][item.id] || 0;
           const label = `${displayValue} (${count})`;
 
-          return { label, value };
+          return { label, value, disabled: count === 0 };
         });
 
         const isOpen = openSections.has(filter.title);

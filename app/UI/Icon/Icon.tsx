@@ -7,6 +7,8 @@ import Menu from "./icons/Menu";
 import CheckboxChecked from "./icons/CheckboxChecked";
 import CheckboxUnchecked from "./icons/CheckboxUnchecked";
 import Clear from "./icons/Clear";
+import Sort from "./icons/Sort";
+import SecondSort from "./icons/SecondSort";
 import { JSX, SVGProps } from "react";
 
 export type IconName =
@@ -18,7 +20,10 @@ export type IconName =
   | "ArrowUp"
   | "CheckboxChecked"
   | "CheckboxUnchecked"
-  | "Clear";
+  | "Clear"
+  | "Sort"
+  | "SecondSort"
+  ;
 
 interface IconProps {
   name: IconName;
@@ -38,6 +43,8 @@ const icons = {
   CheckboxChecked,
   CheckboxUnchecked,
   Clear,
+  Sort,
+  SecondSort
 } satisfies Record<IconName, (props: SVGProps<SVGSVGElement>) => JSX.Element>;
 
 export default function Icon({
